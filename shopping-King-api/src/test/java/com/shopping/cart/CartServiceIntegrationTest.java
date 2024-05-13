@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.MockBeans;
-import com.shopping.cart.dto.CartChangeDto;
-import com.shopping.cart.entity.Cart;
-import com.shopping.cart.repository.CartRepository;
-import com.shopping.cart.service.CartService;
-import com.shopping.common.DeleteAt;
-import com.shopping.product.entity.Product;
-import com.shopping.product.repository.ProductRepository;
+import com.shopping.dto.CartChangeDto;
+import com.shopping.entity.Cart;
+import com.shopping.repository.CartRepository;
+import com.shopping.service.CartService;
+import com.shopping.enums.DeleteAt;
+import com.shopping.entity.Product;
+import com.shopping.repository.ProductRepository;
 
 @DataJpaTest
 @MockBeans({@MockBean(ProductRepository.class)})

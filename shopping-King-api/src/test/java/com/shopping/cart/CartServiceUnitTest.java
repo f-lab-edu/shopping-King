@@ -7,19 +7,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import com.shopping.cart.service.CartService;
+import com.shopping.service.CartService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.shopping.cart.dto.CartChangeDto;
-import com.shopping.cart.entity.Cart;
-import com.shopping.cart.repository.CartRepository;
-import com.shopping.common.DeleteAt;
-import com.shopping.product.entity.Product;
-import com.shopping.product.repository.ProductRepository;
+import com.shopping.dto.CartChangeDto;
+import com.shopping.entity.Cart;
+import com.shopping.repository.CartRepository;
+import com.shopping.enums.DeleteAt;
+import com.shopping.entity.Product;
+import com.shopping.repository.ProductRepository;
 
 @SpringBootTest
 class CartServiceUnitTest {

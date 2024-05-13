@@ -2,13 +2,13 @@ package com.shopping.product;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.shopping.category.entity.Category;
-import com.shopping.category.repository.CategoryRepository;
-import com.shopping.common.DeleteAt;
-import com.shopping.product.dto.ProductRequestDto;
-import com.shopping.product.entity.Product;
-import com.shopping.product.repository.ProductRepository;
-import com.shopping.product.service.ProductService;
+import com.shopping.entity.Category;
+import com.shopping.repository.CategoryRepository;
+import com.shopping.enums.DeleteAt;
+import com.shopping.dto.ProductRequestDto;
+import com.shopping.entity.Product;
+import com.shopping.repository.ProductRepository;
+import com.shopping.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

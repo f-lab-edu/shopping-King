@@ -3,9 +3,9 @@ package com.shopping.order;
 import static org.hamcrest.Matchers.is;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shopping.common.OrderStatus;
-import com.shopping.order.dto.OrderRequestDto;
-import com.shopping.product.dto.ProductResponseDto;
+import com.shopping.enums.OrderStatus;
+import com.shopping.dto.OrderRequestDto;
+import com.shopping.dto.ProductResponseDto;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

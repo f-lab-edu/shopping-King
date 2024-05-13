@@ -3,9 +3,10 @@ package com.shopping.member.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.shopping.member.dto.MemberRequestDto;
-import com.shopping.member.entity.Member;
-import com.shopping.member.repository.MemberRepository;
+import com.shopping.dto.MemberRequestDto;
+import com.shopping.entity.Member;
+import com.shopping.repository.MemberRepository;
+import com.shopping.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

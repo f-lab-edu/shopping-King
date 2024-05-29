@@ -1,0 +1,15 @@
+/build
+/shopping-King-api/build
+*.class
+.gradle
+
+#git
+.github
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose.yml
+
+#intellij
+/.idea

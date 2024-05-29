@@ -1,26 +1,25 @@
 package com.shopping.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
+import com.shopping.dto.CartChangeDto;
+import com.shopping.entity.Cart;
+import com.shopping.entity.Product;
+import com.shopping.enums.DeleteAt;
+import com.shopping.repository.CartRepository;
+import com.shopping.repository.ProductRepository;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import com.shopping.dto.CartChangeDto;
-import com.shopping.entity.Cart;
-import com.shopping.repository.CartRepository;
-import com.shopping.enums.DeleteAt;
-import com.shopping.entity.Product;
-import com.shopping.repository.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
 class CartServiceUnitTest {
@@ -62,7 +61,7 @@ class CartServiceUnitTest {
         .price(100)
         .deleteAt(DeleteAt.N)
         .build();
-    Product product = Product.builder().id(productId).build();
+    Product product = Product.builder().productId(productId).build();
     Cart cart = Cart.builder()
         .id(1L)
         .memberId(memberId)

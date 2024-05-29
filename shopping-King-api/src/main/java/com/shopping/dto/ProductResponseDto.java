@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ProductResponseDto {
 
   // 상품명
-  private String productName;
+  private String productNm;
   // 상품id
   private Long productId;
   // 재고량

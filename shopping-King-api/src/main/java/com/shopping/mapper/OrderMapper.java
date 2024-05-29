@@ -11,7 +11,7 @@ public class OrderMapper {
   public static OrderResponseDto ordertoOrderResponseDto(Orders order) {
     return OrderResponseDto
         .builder()
-        .orderId(order.getId())
+        .orderId(order.getOrderId())
         .orderDt(order.getOrderDt())
         .address(order.getAddress())
         .quantity(order.getQuantity())

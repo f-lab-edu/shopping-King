@@ -30,4 +30,6 @@ tasks.named('bootBuildImage') {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
+bootJar {
+	enabled = false
+}

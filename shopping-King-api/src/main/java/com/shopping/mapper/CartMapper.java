@@ -15,7 +15,7 @@ public class CartMapper {
             .memberId(cart.getId())
             .quantity(cart.getQuantity())
             .price(cart.getProduct().getProductPrice())
-            .productId(cart.getProduct().getId())
+            .productId(cart.getProduct().getProductId())
             .productNm(cart.getProduct().getProductNm())
             .productDiscountPrice(cart.getProduct().getDiscountPrice())
             .productDiscountRate(cart.getProduct().getDiscountRate())

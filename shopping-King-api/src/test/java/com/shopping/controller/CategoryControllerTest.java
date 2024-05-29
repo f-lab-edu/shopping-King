@@ -1,77 +1,98 @@
 package com.shopping.controller;
 
-import static org.hamcrest.Matchers.is;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopping.dto.CategoryDto;
+import com.shopping.enums.DeleteAt;
+import com.shopping.mapper.CategoryMapper;
+import com.shopping.service.CategoryService;
+import com.shopping.web.CategoryController;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-public class CategoryControllerTest {
+@WebMvcTest(CategoryController.class)
+class CategoryControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
 
+  @MockBean
+  private CategoryService categoryService;
+
   @Autowired
-  private ObjectMapper objectMapper;
+  private ObjectMapper objectMapper ;
 
-  private CategoryDto testCategory;
+  @Test
+  @WithMockUser
+  void testFindCategoryList() throws Exception {
+    CategoryDto categoryDto1 = new CategoryDto(1L, "Electronics", DeleteAt.N);
+    CategoryDto categoryDto2 = new CategoryDto(2L, "Books", DeleteAt.N);
+    List<CategoryDto> categoryDtoList = Arrays.asList(categoryDto1, categoryDto2);
 
-  @BeforeEach
-  public void setup() {
+    Mockito.when(categoryService.findCategoryList())
+        .thenReturn(Arrays.asList(CategoryMapper.categoryDtoToCategory(categoryDto1),
+            CategoryMapper.categoryDtoToCategory(categoryDto2)));
+
+    mockMvc.perform(get("/category/list"))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$[0].categoryId").value(categoryDto1.getCategoryId()))
+        .andExpect(jsonPath("$[0].name").value(categoryDto1.getName()))
+        .andExpect(jsonPath("$[0].deleteAt").value(categoryDto1.getDeleteAt().toString()))
+        .andExpect(jsonPath("$[1].categoryId").value(categoryDto2.getCategoryId()))
+        .andExpect(jsonPath("$[1].name").value(categoryDto2.getName()))
+        .andExpect(jsonPath("$[1].deleteAt").value(categoryDto2.getDeleteAt().toString()));
   }
 
   @Test
-  public void testCategoryList() throws Exception {
-    mockMvc
-        .perform(MockMvcRequestBuilders.get("/category/list"))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.[0].categoryId", is(1)))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.[0].name", is("Sample Category")))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.[0].status", is("USE")));
+  @WithMockUser
+  void testFindCategoryDetail() throws Exception {
+    CategoryDto categoryDto = new CategoryDto(1L, "Electronics", DeleteAt.N);
+
+    Mockito.when(categoryService.findCategoryByCategoryId(anyLong()))
+        .thenReturn(CategoryMapper.categoryDtoToCategory(categoryDto));
+
+    mockMvc.perform(get("/category/detail/{categoryId}", 1L))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.categoryId").value(categoryDto.getCategoryId()))
+        .andExpect(jsonPath("$.name").value(categoryDto.getName()))
+        .andExpect(jsonPath("$.deleteAt").value(categoryDto.getDeleteAt().toString()));
   }
 
   @Test
-  public void testCategoryDetail() throws Exception {
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .get("/category/detail/{categoryId}", testCategory.getCategoryId()))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.categoryId", is(1)))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.name", is("Sample Category")))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.status", is("USE")));
-  }
+  @WithMockUser
+  void testChangeCategory() throws Exception {
+    CategoryDto categoryDto = new CategoryDto(1L, "Electronics", DeleteAt.N);
 
-  @Test
-  public void testUpdateCategory() throws Exception {
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .put("/category/change")
+    Mockito.when(categoryService.saveCategory(any(CategoryDto.class)))
+        .thenReturn(CategoryMapper.categoryDtoToCategory(categoryDto));
+
+    mockMvc.perform(put("/category/change")
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(testCategory)))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.header().exists("Location"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.name", is("Test Category")))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.status", is("USE")));
-  }
-
-  @Test
-  public void testDeleteCategory() throws Exception {
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .delete("/category/delete/{categoryId}", testCategory.getCategoryId()))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().string(testCategory.getCategoryId().toString()))
-        .andDo(MockMvcResultHandlers.print());
+            .content(objectMapper.writeValueAsString(categoryDto)))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.categoryId").value(categoryDto.getCategoryId()))
+        .andExpect(jsonPath("$.name").value(categoryDto.getName()))
+        .andExpect(jsonPath("$.deleteAt").value(categoryDto.getDeleteAt().toString()));
   }
 }

@@ -13,6 +13,8 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,24 +34,25 @@ public class CategoryServiceTest {
 
   @Test
   @DisplayName("모든 카테고리 조회")
-  public void testFindAllCategories() {
+  public void testFindAllCategories() throws ExecutionException, InterruptedException {
     List<Category> categories = new ArrayList<>();
     categories.add(new Category(1L, "Category 1", DeleteAt.N));
     categories.add(new Category(2L, "Category 2", DeleteAt.N));
     when(categoryRepository.findAll()).thenReturn(categories);
 
-    List<Category> foundCategories = categoryService.findCategoryList();
-
+    CompletableFuture<List<Category>> futureCategories = categoryService.findCategoryList();
+    List<Category> foundCategories = futureCategories.get();
     assertEquals(categories.size(), foundCategories.size());
   }
 
   @Test
   @DisplayName("특정 카테고리 조회 - 존재하는 경우")
-  public void testFindCategoryByIdExists() {
+  public void testFindCategoryByIdExists() throws ExecutionException, InterruptedException {
     Category category = new Category(1L, "Category 1", DeleteAt.N);
     when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
 
-    Category foundCategory = categoryService.findCategoryByCategoryId(1L);
+    CompletableFuture<Category> futureCategory = categoryService.findCategoryByCategoryId(1L);
+    Category foundCategory = futureCategory.get();
 
     assertEquals(category, foundCategory);
   }
@@ -59,19 +62,24 @@ public class CategoryServiceTest {
   public void testFindCategoryByIdNotExists() {
     when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
-    assertThrows(EntityNotFoundException.class, () -> {
-      categoryService.findCategoryByCategoryId(1L);
+    CompletableFuture<Category> futureCategory = categoryService.findCategoryByCategoryId(1L);
+
+    ExecutionException exception = assertThrows(ExecutionException.class, () -> {
+      futureCategory.get();
     });
+
+    assertEquals(EntityNotFoundException.class, exception.getCause().getClass());
   }
 
   @Test
   @DisplayName("카테고리 저장")
-  public void testSaveCategory() {
+  public void testSaveCategory() throws ExecutionException, InterruptedException {
     CategoryDto categoryDto = new CategoryDto(1L, "Category 1", DeleteAt.N);
     Category category = new Category(1L, "Category 1", DeleteAt.N);
     when(categoryRepository.save(any())).thenReturn(category);
 
-    Category savedCategory = categoryService.saveCategory(categoryDto);
+    CompletableFuture<Category> futureCategory = categoryService.saveCategory(categoryDto);
+    Category savedCategory = futureCategory.get();
 
     assertEquals(category, savedCategory);
   }

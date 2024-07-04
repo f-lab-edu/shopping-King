@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ProductDto {
 
   // 상품명
-  private String productName;
+  private String productNm;
   // 상품id
   private Long productId;
   // 재고량
@@ -35,10 +35,5 @@ public class ProductDto {
   private ProductStatus statusCode;
   // 상품 설명
   private String description;
-
-  public int getDiscountPrice() {
-    return discountPrice != null ? discountPrice : price;
-  }
-
 
 }

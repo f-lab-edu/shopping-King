@@ -13,10 +13,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LoginAspect {
 
-  private final HttpServletRequest request;
-  private final RedisUtil redisUtil;
+/*  private final HttpServletRequest request;
+  private final RedisUtil redisUtil;*/
 
-  @Around("execution(* com.shopping..*(..))")
+/*  @Around("execution(* com.shopping.web..*(..))")
   public Object authenticate(ProceedingJoinPoint joinPoint) throws Throwable {
     String authorizationHeader = request.getHeader("Authorization");
 
@@ -30,5 +30,5 @@ public class LoginAspect {
     }
 
     return joinPoint.proceed();
-  }
+  }*/
 }

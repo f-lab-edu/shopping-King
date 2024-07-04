@@ -6,26 +6,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
-import com.shopping.enums.OrderStatus;
-import com.shopping.entity.Member;
-import com.shopping.repository.MemberRepository;
 import com.shopping.dto.OrderRequestDto;
+import com.shopping.entity.Member;
 import com.shopping.entity.Orders;
-import com.shopping.repository.OrderRepository;
 import com.shopping.entity.Product;
+import com.shopping.enums.OrderStatus;
+import com.shopping.repository.MemberRepository;
+import com.shopping.repository.OrderRepository;
 import com.shopping.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @DisplayName("OrderService 테스트")
@@ -50,7 +48,7 @@ public class OrderServiceTest {
     Long memberId = 1L;
     Member member = Member.builder().id(memberId).name("User1").build();
     List<Orders> orders = new ArrayList<>();
-    orders.add(Orders.builder().id(1L).member(member).orderDt(LocalDateTime.now()).build());
+    orders.add(Orders.builder().orderId(1L).member(member).orderDt(LocalDateTime.now()).build());
     when(orderRepository.findByMemberId(memberId)).thenReturn(orders);
 
     List<Orders> foundOrders = orderService.findOrdersByMemberId(memberId);
@@ -73,7 +71,7 @@ public class OrderServiceTest {
   @DisplayName("특정 주문 조회 - 주문이 존재하는 경우")
   public void testFindOrdersByOrderId_WhenOrderExists() {
     Long orderId = 1L;
-    Orders order = Orders.builder().id(orderId).orderDt(LocalDateTime.now()).build();
+    Orders order = Orders.builder().orderId(orderId).orderDt(LocalDateTime.now()).build();
     when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
     Orders foundOrder = orderService.findOrdersByOrderId(orderId);
@@ -107,14 +105,14 @@ public class OrderServiceTest {
         .build();
 
     Member member = Member.builder().id(memberId).name("User1").build();
-    Product product = Product.builder().id(productId).productNm("Product1").build();
+    Product product = Product.builder().productId(productId).productNm("Product1").build();
 
     when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
     when(productRepository.findById(productId)).thenReturn(Optional.of(product));
     when(orderRepository.save(any())).thenAnswer(invocation -> {
       Orders order = invocation.getArgument(0);
       return Orders.builder()
-          .id(1L) // 임의의 값 설정
+          .orderId(1L) // 임의의 값 설정
           .member(order.getMember())
           .product(order.getProduct())
           .quantity(order.getQuantity())
@@ -129,7 +127,7 @@ public class OrderServiceTest {
 
     assertNotNull(result);
     assertEquals(memberId, result.getMember().getId());
-    assertEquals(productId, result.getProduct().getId());
+    assertEquals(productId, result.getProduct().getProductId());
     assertEquals(orderRequestDto.getQuantity(), result.getQuantity());
     assertEquals(orderRequestDto.getPrice(), result.getPrice());
     assertEquals(orderRequestDto.getOrderStatus(), result.getOrderStatus());
